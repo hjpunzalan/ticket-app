@@ -1,7 +1,6 @@
+import { validateRequest } from "./../middlewares/validateRequest";
 import express, { Request, Response } from "express";
-import { body, validationResult } from "express-validator";
-
-import { RequestValidationErorr } from "./../errors/requestValidationErrors";
+import { body } from "express-validator";
 
 const router = express.Router();
 router.post(
@@ -15,13 +14,8 @@ router.post(
 			.notEmpty()
 			.withMessage("You must supply a password"),
 	],
-	(req: Request, res: Response) => {
-		const errors = validationResult(req);
-
-		if (!errors.isEmpty()) {
-			throw new RequestValidationErorr(errors.array());
-		}
-	}
+	validateRequest,
+	(req: Request, res: Response) => {}
 );
 
 export { router as signinRouter };
