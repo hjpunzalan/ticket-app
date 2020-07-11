@@ -10,3 +10,10 @@ test("responds with details about the current user", async () => {
 		.expect(200);
 	expect(response.body.currentUser.email).toEqual("test@test.com");
 });
+
+test("responds with null if not authenticated", async () => {
+	const response = await request(app)
+		.get("/api/users/currentuser")
+		.expect(200);
+	expect(response.body.currentUser).toEqual(null);
+});
