@@ -11,8 +11,13 @@ spec:
   rules:
     - host: ticketapp.dev
       http:
+        # paths are accessed in order
         paths:
           - path: /api/users/?(.*)
             backend:
               serviceName: auth-srv
+              servicePort: 3000
+          - path: /?(.*)
+            backend:
+              serviceName: client-srv
               servicePort: 3000
