@@ -16,7 +16,7 @@ build:
         manual:
           - src: "/src/**/*.ts"
             dest: .
-    - image: hjpunzalan/client
+    - image: hjpunzalan/ticket-client
       context: client
       docker:
         dockerfile: Dockerfile
