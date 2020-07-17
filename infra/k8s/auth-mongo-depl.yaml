@@ -15,6 +15,7 @@ spec:
       # initContainers:
       containers:
         - name: auth-mongo
+          # image from docker hub
           image: mongo
 ---
 apiVersion: v1
