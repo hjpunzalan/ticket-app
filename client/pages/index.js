@@ -7,12 +7,16 @@ const LandingPage = ({ currentUser }) => {
 };
 
 // Making request from server
-LandingPage.getInitialProps = async () => {
-	const response = await axios.get(
-		"http://ingress-nginx-controller-admission.kube-system.svc.cluster.local/api/users/currentuser"
-	);
+LandingPage.getInitialProps = async ({ req }) => {
+	let baseUrl = "";
+	console.log(`${req["x-forwarded-proto"]}://${req.headers.host}`);
 
-	return response.data;
+	if (typeof window === "undefined") {
+		// x-forwarded-proto set by nginx, IP address for headers.host mapped in pod config
+		baseUrl = `${req["x-forwarded-proto"]}://${req.headers.host}`;
+	}
+	const { data } = await axios.get(`${baseUrl}/api/users/currentuser`);
+	return data;
 };
 
 export default LandingPage;
