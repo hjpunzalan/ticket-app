@@ -1,9 +1,8 @@
-import { validateRequest } from "./../middlewares/validateRequest";
+import { validateRequest, BadRequestError } from "@hjtickets/common";
 import express, { Request, Response } from "express";
 import { body } from "express-validator";
 import jwt from "jsonwebtoken";
 import { User } from "../models/user";
-import { BadRequestError } from "../errors/badRequestError";
 
 const router = express.Router();
 
