@@ -6,6 +6,7 @@ import { errorHandler, NotFoundError, currentUser } from "@hjtickets/common";
 import { createTicketRouter } from "./routes/new";
 import { showTicketRouter } from "./routes/show";
 import { indexTicketRouter } from "./routes";
+import { updateTicketRouter } from "./routes/update";
 
 const app = express();
 app.set("trust proxy", true); // ingress-nginx
@@ -22,6 +23,7 @@ app.use(currentUser);
 app.use(indexTicketRouter);
 app.use(showTicketRouter);
 app.use(createTicketRouter);
+app.use(updateTicketRouter);
 
 app.all("*", () => {
 	throw new NotFoundError();
