@@ -1,5 +1,7 @@
 import nats from "node-nats-streaming";
 
+console.clear();
+
 // client
 // will emit connect event after
 const stan = nats.connect("ticketing", "abc", {
