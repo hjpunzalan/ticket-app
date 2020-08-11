@@ -10,6 +10,12 @@ const stan = nats.connect("ticketing", randomBytes(4).toString("hex"), {
 stan.on("connect", () => {
 	console.log("Listener connected to nats");
 
+	// Graceful client shutdown
+	stan.on("close", () => {
+		console.log("NATS connection closed!");
+		process.exit();
+	});
+
 	// Set manual ack mode true
 	// event is only completed only once acknowledged otherwise sent again
 	// useful in case listeners goes down etc.
@@ -33,3 +39,7 @@ stan.on("connect", () => {
 		msg.ack();
 	});
 });
+
+// Terminating program closes client first
+process.on("SIGINT", () => stan.close());
+process.on("SIGTERM", () => stan.close());
