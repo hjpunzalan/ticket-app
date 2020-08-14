@@ -15,34 +15,7 @@ stan.on("connect", () => {
 		process.exit();
 	});
 
-	// Set manual ack mode true
-	// event is only completed only once acknowledged otherwise sent again
-	// useful in case listeners goes down etc.
-	// setDurableName tracks which event was processed and which hasnt
-	// setDelivarableAllAvailable first time when creating subscription to track delivered events
-	const options = stan
-		.subscriptionOptions()
-		.setManualAckMode(true)
-		.setDeliverAllAvailable()
-		.setDurableName("order-service");
-
-	//esablish listener to ticket:created channel
-	// add into a queue group (persists durable name subscription @ restart)
-	const subscription = stan.subscribe(
-		"ticket:created",
-		"queue-group-name",
-		options
-	);
-
-	// listen to any published message
-	subscription.on("message", (msg: Message) => {
-		const data = msg.getData();
-
-		if (typeof data === "string") {
-			console.log(`Received event #${msg.getSequence()}, with data: ${data}`);
-		}
-		msg.ack();
-	});
+	new TicketCreatedListener(stan);
 });
 
 // Terminating program closes client first
@@ -64,6 +37,11 @@ abstract class Listener {
 	}
 
 	subscriptionOptions() {
+		// Set manual ack mode true
+		// event is only completed only once acknowledged otherwise sent again
+		// useful in case listeners goes down etc.
+		// setDurableName tracks which event was processed and which hasnt
+		// setDelivarableAllAvailable first time when creating subscription to track delivered events
 		return this.client
 			.subscriptionOptions()
 			.setDeliverAllAvailable()
@@ -73,6 +51,8 @@ abstract class Listener {
 	}
 
 	listen() {
+		//esablish listener to ticket:created channel
+		// add into a queue group (persists durable name subscription @ restart)
 		const subscription = this.client.subscribe(
 			this.subject,
 			this.queueGroupName,
@@ -80,6 +60,7 @@ abstract class Listener {
 		);
 
 		subscription.on("message", (msg: Message) => {
+			// listen to any published message
 			console.log(`Message received ${this.subject} / ${this.queueGroupName}`);
 
 			const parsedData = this.parseMessage(msg);
@@ -92,5 +73,16 @@ abstract class Listener {
 		return typeof data === "string"
 			? JSON.parse(data)
 			: JSON.parse(data.toString("utf-8"));
+	}
+}
+
+class TicketCreatedListener extends Listener {
+	subject = "ticket:created";
+	queueGroupName = "payments-service";
+
+	onMessage(data: any, msg: Message) {
+		console.log("Event data!", data);
+
+		msg.ack();
 	}
 }
