@@ -18,14 +18,21 @@ stan.on("connect", () => {
 	// Set manual ack mode true
 	// event is only completed only once acknowledged otherwise sent again
 	// useful in case listeners goes down etc.
+	// setDurableName tracks which event was processed and which hasnt
+	// setDelivarableAllAvailable first time when creating subscription to track delivered events
 	const options = stan
 		.subscriptionOptions()
 		.setManualAckMode(true)
-		.setDeliverAllAvailable();
+		.setDeliverAllAvailable()
+		.setDurableName("order-service");
 
 	//esablish listener to ticket:created channel
-	// add into a queue group
-	const subscription = stan.subscribe("ticket:created", options);
+	// add into a queue group (persists durable name subscription @ restart)
+	const subscription = stan.subscribe(
+		"ticket:created",
+		"queue-group-name",
+		options
+	);
 
 	// listen to any published message
 	subscription.on("message", (msg: Message) => {
