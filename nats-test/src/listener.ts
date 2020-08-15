@@ -16,7 +16,8 @@ stan.on("connect", () => {
 		process.exit();
 	});
 
-	new TicketCreatedListener(stan);
+	const listener = new TicketCreatedListener(stan);
+	listener.listen();
 });
 
 // Terminating program closes client first
