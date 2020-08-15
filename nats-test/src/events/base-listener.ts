@@ -1,8 +1,9 @@
 import { Message, Stan } from "node-nats-streaming";
+import { Subjects } from "./subjects";
 
 export abstract class Listener {
 	// abstract properties to be defined in derived class
-	abstract subject: string;
+	abstract subject: Subjects;
 	abstract queueGroupName: string;
 	abstract onMessage(data: any, msg: Message): void;
 	private client: Stan;
