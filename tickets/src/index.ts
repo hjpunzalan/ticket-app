@@ -15,6 +15,17 @@ const start = async () => {
 			"randomString",
 			"http://nats-srv:4222"
 		);
+
+		// Graceful client shutdown
+		natsWrapper.client.on("close", () => {
+			console.log("NATS connection closed!");
+			process.exit();
+		});
+
+		// Terminating program closes client first
+		process.on("SIGINT", () => natsWrapper.client.close());
+		process.on("SIGTERM", () => natsWrapper.client.close());
+
 		// Mongodb will create a database if we connect it to a new one
 		await mongoose.connect(process.env.MONGO_URI, {
 			useNewUrlParser: true,
