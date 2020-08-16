@@ -15,10 +15,10 @@ spec:
       containers:
         - name: client
           image: hjpunzalan/ticket-client
-      hostAliases:
-        - ip: "192.168.99.100"
-          hostnames:
-            - "ticketapp.dev"
+      # hostAliases:
+      #   - ip: "192.168.99.100"
+      #     hostnames:
+      #       - "ticketapp.dev"
 
 ---
 apiVersion: v1
