@@ -2,6 +2,7 @@ import express, { Response, Request } from "express";
 import { body } from "express-validator";
 import { requireAuth, validateRequest } from "@hjtickets/common";
 import { Ticket } from "../models/ticket";
+import { TicketCreatedPublisher } from "./../events/publishers/ticket-created-publisher";
 
 const router = express.Router();
 
@@ -9,10 +10,7 @@ router.post(
 	"/api/tickets",
 	requireAuth,
 	[
-		body("title")
-			.not()
-			.isEmpty()
-			.withMessage("Title is required"),
+		body("title").not().isEmpty().withMessage("Title is required"),
 		body("price")
 			.isFloat({ gt: 0 })
 			.withMessage("Price must be greater than 0"),
@@ -27,6 +25,15 @@ router.post(
 		});
 
 		await ticket.save();
+
+		// Use ticket details after sanitisation ie. not from req.body
+		await new TicketCreatedPublisher(client).publish({
+			id: ticket.id,
+			title: ticket.title,
+			price: ticket.price,
+			userId: ticket.userId,
+		});
+
 		res.status(201).send(ticket);
 	}
 );
