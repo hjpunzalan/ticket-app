@@ -27,12 +27,12 @@ router.post(
 		await ticket.save();
 
 		// Use ticket details after sanitisation ie. not from req.body
-		await new TicketCreatedPublisher(client).publish({
-			id: ticket.id,
-			title: ticket.title,
-			price: ticket.price,
-			userId: ticket.userId,
-		});
+		// await new TicketCreatedPublisher(client).publish({
+		// 	id: ticket.id,
+		// 	title: ticket.title,
+		// 	price: ticket.price,
+		// 	userId: ticket.userId,
+		// });
 
 		res.status(201).send(ticket);
 	}
