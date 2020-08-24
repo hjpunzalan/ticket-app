@@ -3,10 +3,10 @@ import "express-async-errors";
 import { json } from "body-parser";
 import cookieSession from "cookie-session";
 import { errorHandler, NotFoundError, currentUser } from "@hjtickets/common";
-import { createTicketRouter } from "./routes/new";
-import { showTicketRouter } from "./routes/show";
-import { indexTicketRouter } from "./routes";
-import { updateTicketRouter } from "./routes/update";
+import { indexOrderRouter } from "./routes";
+import { showOrderRouter } from "./routes/show";
+import { newOrderRouter } from "./routes/new";
+import { deleteOrderRouter } from "./routes/delete";
 
 const app = express();
 app.set("trust proxy", true); // ingress-nginx
@@ -20,10 +20,10 @@ app.use(
 
 app.use(currentUser);
 
-app.use(indexTicketRouter);
-app.use(showTicketRouter);
-app.use(createTicketRouter);
-app.use(updateTicketRouter);
+app.use(indexOrderRouter);
+app.use(showOrderRouter);
+app.use(newOrderRouter);
+app.use(deleteOrderRouter);
 
 app.all("*", () => {
 	throw new NotFoundError();
