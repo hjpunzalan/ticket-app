@@ -2,14 +2,14 @@ import mongoose from "mongoose";
 
 interface OrderAttrs {
 	userId: string;
-	status: string;
+	status: OrderStatus;
 	expiresAt: Date;
 	ticketId: TicketDoc;
 }
 
 interface OrderDoc extends mongoose.Document {
 	userId: string;
-	status: string;
+	status: OrderStatus;
 	expiresAt: Date;
 	ticketId: TicketDoc;
 }
