@@ -86,7 +86,7 @@ describe("Order creation", () => {
 		});
 		await ticket.save();
 
-		await request(app)
+		const { body: orderOne } = await request(app)
 			.post("/api/orders")
 			.set("Cookie", global.signin())
 			.send({
@@ -96,7 +96,7 @@ describe("Order creation", () => {
 
 		const orders = await Order.find({});
 		expect(orders.length).toEqual(1);
-		expect(orders[0].ticket.toString()).toEqual(ticket.id);
+		expect(orders[0].id).toEqual(orderOne.id);
 	});
 
 	test.todo("emits an order created event");
