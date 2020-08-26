@@ -79,5 +79,23 @@ describe("Order creation", () => {
 			})
 			.expect(400);
 	});
-	test("reserves a ticket", async () => {});
+	test("reserves a ticket", async () => {
+		const ticket = Ticket.build({
+			title: "concert",
+			price: 20,
+		});
+		await ticket.save();
+
+		await request(app)
+			.post("/api/orders")
+			.set("Cookie", global.signin())
+			.send({
+				ticketId: ticket.id,
+			})
+			.expect(201);
+
+		const orders = await Order.find({});
+		expect(orders.length).toEqual(1);
+		expect(orders[0].ticket.toString()).toEqual(ticket.id);
+	});
 });
