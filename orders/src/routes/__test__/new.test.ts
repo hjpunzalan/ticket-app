@@ -98,4 +98,6 @@ describe("Order creation", () => {
 		expect(orders.length).toEqual(1);
 		expect(orders[0].ticket.toString()).toEqual(ticket.id);
 	});
+
+	test.todo("emits an order created event");
 });
