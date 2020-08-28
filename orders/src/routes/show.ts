@@ -28,7 +28,7 @@ router.get(
 			throw new NotAuthorizedError();
 		}
 
-		res.send({});
+		res.send(order);
 	}
 );
 
