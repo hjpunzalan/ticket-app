@@ -8,6 +8,8 @@ import {
 	OrderStatus,
 } from "@hjtickets/common";
 import { Order } from "../models/order";
+import { OrderCancelledPublisher } from "../events/publishers/order-cancelled-publisher";
+import { natsWrapper } from "../nats-wrapper";
 
 const router = express.Router();
 
@@ -20,7 +22,7 @@ router.delete(
 			throw new BadRequestError("Order id is invalid.");
 		}
 
-		const order = await Order.findById(req.params.orderId);
+		const order = await Order.findById(req.params.orderId).populate("ticket");
 		if (!order) {
 			throw new NotFoundError();
 		}
@@ -33,6 +35,12 @@ router.delete(
 		await order.save();
 
 		// publish and event saying this was cancelled!
+		new OrderCancelledPublisher(natsWrapper.client).publish({
+			id: order.id,
+			ticket: {
+				id: order.ticket.id,
+			},
+		});
 
 		res.status(200).send(order);
 	}
