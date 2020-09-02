@@ -12,10 +12,7 @@ describe("Request validation", () => {
 	});
 
 	test("can only be accessed if the user is signed in", async () => {
-		const response = await request(app)
-			.post("/api/orders")
-			.send({})
-			.expect(401);
+		await request(app).post("/api/orders").send({}).expect(401);
 	});
 
 	test("returns a status other than 401 if the user is signed in", async () => {
@@ -99,5 +96,21 @@ describe("Order creation", () => {
 		expect(orders[0].id).toEqual(orderOne.id);
 	});
 
-	test.todo("emits an order created event");
+	test("emits an order created event", async () => {
+		const ticket = Ticket.build({
+			title: "concert",
+			price: 20,
+		});
+		await ticket.save();
+
+		const { body: orderOne } = await request(app)
+			.post("/api/orders")
+			.set("Cookie", global.signin())
+			.send({
+				ticketId: ticket.id,
+			})
+			.expect(201);
+
+		expect(natsWrapper.client.publish).toHaveBeenCalled();
+	});
 });
