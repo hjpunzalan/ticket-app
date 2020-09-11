@@ -55,6 +55,7 @@ describe("Order creation", () => {
 	});
 	test("returns an error if the ticket is already reserved", async () => {
 		const ticket = Ticket.build({
+			id: mongoose.Types.ObjectId().toHexString(),
 			title: "concert",
 			price: 20,
 		});
@@ -78,6 +79,7 @@ describe("Order creation", () => {
 	});
 	test("reserves a ticket", async () => {
 		const ticket = Ticket.build({
+			id: mongoose.Types.ObjectId().toHexString(),
 			title: "concert",
 			price: 20,
 		});
@@ -98,12 +100,13 @@ describe("Order creation", () => {
 
 	test("emits an order created event", async () => {
 		const ticket = Ticket.build({
+			id: mongoose.Types.ObjectId().toHexString(),
 			title: "concert",
 			price: 20,
 		});
 		await ticket.save();
 
-		const { body: orderOne } = await request(app)
+		await request(app)
 			.post("/api/orders")
 			.set("Cookie", global.signin())
 			.send({
