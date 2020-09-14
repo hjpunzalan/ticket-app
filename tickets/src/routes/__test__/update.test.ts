@@ -2,6 +2,7 @@ import request from "supertest";
 import mongoose from "mongoose";
 import { natsWrapper } from "./../../nats-wrapper";
 import { app } from "../../app";
+import { Ticket } from "../../models/ticket";
 
 test("returns a 404 if the provided id does not exist", async () => {
 	const id = new mongoose.Types.ObjectId().toHexString();
@@ -85,6 +86,7 @@ test("update the ticket provided valid inputs", async () => {
 			title: "concert",
 			price: 20,
 		});
+	// Update ticket
 	await request(app)
 		.put(`/api/tickets/${response.body.id}`)
 		.set("Cookie", cookie)
@@ -113,6 +115,7 @@ test("publishes an event", async () => {
 			title: "concert",
 			price: 20,
 		});
+	// Update ticket
 	await request(app)
 		.put(`/api/tickets/${response.body.id}`)
 		.set("Cookie", cookie)
@@ -123,4 +126,31 @@ test("publishes an event", async () => {
 		.expect(200);
 
 	expect(natsWrapper.client.publish).toHaveBeenCalled();
+});
+
+test("rejects the update if the ticket is already reserved", async () => {
+	const cookie = global.signin();
+	const newTitle = "hello";
+	const newPrice = 5;
+	const response = await request(app)
+		.post("/api/tickets")
+		.set("Cookie", cookie)
+		.send({
+			title: "concert",
+			price: 20,
+		});
+
+	const ticket = await Ticket.findById(response.body.id);
+	ticket!.set({ orderId: mongoose.Types.ObjectId().toHexString() });
+	await ticket!.save();
+
+	// Update ticket and expect a bad request error
+	await request(app)
+		.put(`/api/tickets/${response.body.id}`)
+		.set("Cookie", cookie)
+		.send({
+			title: newTitle,
+			price: newPrice,
+		})
+		.expect(400);
 });
