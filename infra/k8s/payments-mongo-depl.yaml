@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payments-mongo-depl
+spec:
+  selector:
+    matchLabels:
+      app: payments-mongo
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: payments-mongo
+    spec:
+      # initContainers:
+      containers:
+        - name: payments-mongo
+          # image from docker hub
+          image: mongo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payments-mongo-srv
+spec:
+  selector:
+    app: payments-mongo
+  type: ClusterIP
+  ports:
+    - name: db
+      port: 27017
+      targetPort: 27017
+      protocol: TCP
