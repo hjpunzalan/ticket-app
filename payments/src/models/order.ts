@@ -27,8 +27,9 @@ const orderSchema = new mongoose.Schema(
 	{
 		status: {
 			type: String,
-			enum: OrderStatus,
 			required: true,
+			enum: Object.values(OrderStatus),
+			default: OrderStatus.Created,
 		},
 		userId: {
 			type: String,
