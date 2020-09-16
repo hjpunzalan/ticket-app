@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { message } from "node-nats-streaming";
+import { Message } from "node-nats-streaming";
 import { ExpirationCompleteEvent } from "@hjtickets/common";
 import { natsWrapper } from "./../../../nats-wrapper";
 import { ExpirationCompleteListener } from "./../expiration-complete.listener";
@@ -34,3 +34,33 @@ const setup = async () => {
 
 	return { listener, ticket, order, data, msg };
 };
+
+test("updates the order status to cancelled", async () => {
+	const { listener, order, ticket, data, msg } = await setup();
+	await listener.onMessage(data, msg);
+
+	const updatedOrder = await Order.findById(order.id);
+
+	expect(updatedOrder!.status).toEqual(OrderStatus.Cancelled);
+});
+
+test("emit and OrderCancelled event ", async () => {
+	const { listener, order, ticket, data, msg } = await setup();
+	await listener.onMessage(data, msg);
+
+	expect(natsWrapper.client.publish).toHaveBeenCalled();
+
+	// Ensure event data is same as order id
+	const eventData = JSON.parse(
+		(natsWrapper.client.publish as jest.Mock).mock.calls[0][1]
+	);
+
+	expect(eventData.id).toEqual(order.id);
+});
+
+test("acks the message", async () => {
+	const { listener, order, ticket, data, msg } = await setup();
+	await listener.onMessage(data, msg);
+
+	expect(msg.ack).toHaveBeenCalled();
+});
