@@ -3,6 +3,7 @@ import { app } from "./app";
 import { natsWrapper } from "./nats-wrapper";
 import { TicketUpdatedListener } from "./events/listeners/ticket-updated-listener";
 import { TicketCreatedListener } from "./events/listeners/ticket-created-listener";
+import { ExpirationCompleteListener } from "./events/listeners/expiration-complete.listener";
 
 const start = async () => {
 	if (!process.env.JWT_KEY) {
@@ -40,6 +41,7 @@ const start = async () => {
 		// Event listeners
 		new TicketCreatedListener(natsWrapper.client).listen();
 		new TicketUpdatedListener(natsWrapper.client).listen();
+		new ExpirationCompleteListener(natsWrapper.client).listen();
 
 		// Mongodb will create a database if we connect it to a new one
 		await mongoose.connect(process.env.MONGO_URI, {
