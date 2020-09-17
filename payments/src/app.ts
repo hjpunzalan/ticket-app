@@ -3,6 +3,7 @@ import "express-async-errors";
 import { json } from "body-parser";
 import cookieSession from "cookie-session";
 import { errorHandler, NotFoundError, currentUser } from "@hjtickets/common";
+import { createChargeRouter } from "./routes/new";
 
 const app = express();
 app.set("trust proxy", true); // ingress-nginx
@@ -15,6 +16,9 @@ app.use(
 );
 
 app.use(currentUser);
+
+// Routes
+app.use(createChargeRouter);
 
 app.all("*", () => {
 	throw new NotFoundError();
