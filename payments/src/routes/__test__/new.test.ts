@@ -3,8 +3,7 @@ import request from "supertest";
 import { app } from "../../app";
 import { Order, OrderStatus } from "../../models/order";
 import { stripe } from "../../stripe";
-
-jest.mock("../../stripe");
+import { Payment } from "../../models/payment";
 
 test("returns a 404 when purchasing an order that does not exist", async () => {
 	await request(app)
@@ -60,11 +59,12 @@ test("returns a 400 when purchasing a cancelled order", async () => {
 
 test("returns a 204 with valid inputs", async () => {
 	const userId = mongoose.Types.ObjectId().toHexString();
+	const price = Math.floor(Math.random() * 100000);
 	const order = Order.build({
 		id: mongoose.Types.ObjectId().toHexString(),
 		userId,
 		version: 0,
-		price: 200,
+		price,
 		status: OrderStatus.Created,
 	});
 	await order.save();
@@ -77,6 +77,19 @@ test("returns a 204 with valid inputs", async () => {
 			orderId: order.id,
 		})
 		.expect(201);
-	const chargeOptions = (stripe.charges.create as jest.Mock).mock.calls[0][0];
-	expect(chargeOptions.amount).toEqual(order.price * 100);
+	// There many new test after this one that can exceed stripe charge list limit of 10
+	const stripeCharges = await stripe.charges.list({ limit: 50 });
+	const stripeCharge = stripeCharges.data.find(
+		(charge) => charge.amount === price * 100
+	);
+
+	expect(stripeCharge).toBeDefined();
+	expect(stripeCharge!.currency).toEqual("aud");
+
+	const payment = await Payment.findOne({
+		orderId: order.id,
+	});
+
+	// Undefined /= null
+	expect(payment).not.toBeNull();
 });

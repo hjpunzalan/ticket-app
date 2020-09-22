@@ -1,6 +1,7 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
+import { stripeApi } from "./stripe-api";
 
 declare global {
 	namespace NodeJS {
@@ -14,6 +15,8 @@ let mongo: any;
 
 // Use mock nats wrapper for all test
 jest.mock("../nats-wrapper");
+
+process.env.STRIPE_KEY = stripeApi;
 
 beforeAll(async () => {
 	process.env.JWT_KEY = "asdsa";
