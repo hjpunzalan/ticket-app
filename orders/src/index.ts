@@ -1,3 +1,4 @@
+import { PaymentCreatedListener } from "./events/listeners/payment-created-listener";
 import mongoose from "mongoose";
 import { app } from "./app";
 import { natsWrapper } from "./nats-wrapper";
@@ -42,6 +43,7 @@ const start = async () => {
 		new TicketCreatedListener(natsWrapper.client).listen();
 		new TicketUpdatedListener(natsWrapper.client).listen();
 		new ExpirationCompleteListener(natsWrapper.client).listen();
+		new PaymentCreatedListener(natsWrapper.client).listen();
 
 		// Mongodb will create a database if we connect it to a new one
 		await mongoose.connect(process.env.MONGO_URI, {
