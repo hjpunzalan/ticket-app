@@ -1,4 +1,4 @@
-import buildClient from "../api/buildClient";
+// import buildClient from "../api/buildClient";
 
 /* Dont use hooks outside of react components */
 const LandingPage = ({ currentUser }) => {
@@ -10,10 +10,10 @@ const LandingPage = ({ currentUser }) => {
 };
 
 // Making request from server unless navigating between pages within the app
-LandingPage.getInitialProps = async (context) => {
-	const client = buildClient(context);
-	const { data } = await client.get("/api/users/currentuser");
-	return data;
+LandingPage.getInitialProps = async (context, client, currentUser) => {
+	// const client = buildClient(context);
+	// const { data } = await client.get("/api/users/currentuser");
+	// return data;
 };
 
 export default LandingPage;
