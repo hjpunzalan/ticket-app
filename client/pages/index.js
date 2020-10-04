@@ -12,18 +12,20 @@ const LandingPage = ({ currentUser, tickets }) => {
 	});
 
 	return (
-		<div>
-			<h1>Tickets</h1>
-			<table className="table">
-				<thead>
-					<tr>
-						<th>Title</th>
-						<th>Price</th>
-					</tr>
-				</thead>
-				<tbody>{ticketList}</tbody>
-			</table>
-		</div>
+		currentUser && (
+			<div>
+				<h1>Tickets</h1>
+				<table className="table">
+					<thead>
+						<tr>
+							<th>Title</th>
+							<th>Price</th>
+						</tr>
+					</thead>
+					<tbody>{ticketList}</tbody>
+				</table>
+			</div>
+		)
 	);
 };
 
