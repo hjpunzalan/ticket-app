@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import Router from "next/router";
 import useRequest from "../../hooks/useRequest";
 
-export default Signout = () => {
+const Signout = () => {
 	const { doRequest } = useRequest({
 		url: "/api/users/signout",
 		method: "post",
@@ -16,3 +16,5 @@ export default Signout = () => {
 
 	return <div>Signing you out...</div>;
 };
+
+export default Signout;
