@@ -1,4 +1,4 @@
-// import buildClient from "../api/buildClient";
+import Link from "next/link";
 
 /* Dont use hooks outside of react components */
 const LandingPage = ({ currentUser, tickets }) => {
@@ -7,6 +7,11 @@ const LandingPage = ({ currentUser, tickets }) => {
 			<tr key={ticket.id}>
 				<td>{ticket.title}</td>
 				<td>{ticket.price}</td>
+				<td>
+					<Link href="/tickets/[ticketId]" as={`/tickets/${ticket.id}`}>
+						<a>View</a>
+					</Link>
+				</td>
 			</tr>
 		);
 	});
