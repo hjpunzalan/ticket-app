@@ -10,6 +10,14 @@ const header = ({ currentUser }) => {
 			href: "/auth/signin",
 		},
 		currentUser && {
+			label: "Create Ticket",
+			href: "/tickets/new",
+		},
+		currentUser && {
+			label: "My Orders",
+			href: "/orders",
+		},
+		currentUser && {
 			label: "Sign out",
 			href: "/auth/signout",
 		},
