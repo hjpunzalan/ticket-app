@@ -1,0 +1,2 @@
+export const stripeApi =
+	"sk_test_51HScnPH8B0q8V7WymtJtioSyiYrfanRvoz1VlXkThphpBszarbaItvNolq3GFMTz3wmlPoUiaBhMoKtd4pO240tM00JUIiO9GZ";
