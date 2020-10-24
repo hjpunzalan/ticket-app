@@ -9,7 +9,7 @@ metadata:
     nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   rules:
-    - host: ticketapp.test
+    - host: ticketapp.dev
       http:
         # paths are accessed in order
         paths:
